@@ -20,6 +20,8 @@
 #define NUMPAD 6
 #define MOUSE 7
 
+#define USE_ABNT_LAYOUT
+
 &mt {
     tapping-term-ms = <300>;
     flavor = "balanced";
@@ -50,6 +52,7 @@
 
         base_layer {
             display-name = "base";
+        #ifndef USE_ABNT_LAYOUT
             bindings = < 
 &kp ESC   &kp N1 &kp N2     &kp N3   &kp N4    &kp N5                               &kp N6 &kp N7     &kp N8    &kp N9   &kp N0    &kp MINUS
 &kp TAB   &kp Q  &kp W      &kp E    &kp R     &kp T                                &kp Y  &kp U      &kp I     &kp O    &kp P     &kp BSPC
@@ -57,6 +60,15 @@
 &kp LCTRL &kp Z  &kp X      &kp C    &kp V     &kp B     &mo MEDIA       &mo ADJUST &kp N  &kp M      &kp COMMA &kp DOT  &kp FSLH  &kp ENTER
                  &mo NUMPAD &kp LGUI &kp LALT &kp SPACE  &mo SYMB_NAV    &kp ENTER  &kp BSPC  &kp DEL &kp RGUI  &kp RCTRL
             >;
+        #else
+            bindings = < 
+&kp ESC   &kp N1 &kp N2     &kp N3   &kp N4    &kp N5                               &kp N6 &kp N7     &kp N8    &kp N9   &kp N0    &kp MINUS
+&kp TAB   &kp Q  &kp W      &kp E    &kp R     &kp T                                &kp Y  &kp U      &kp I     &kp O    &kp P     &kp BSPC
+&kp LSHFT &kp A  &kp S      &kp D    &kp F     &kp G                                &kp H  &kp J      &kp K     &kp L    &kp SEMI  &kp SQT
+&kp LCTRL &kp Z  &kp X      &kp C    &kp V     &kp B     &mo MEDIA       &mo ADJUST &kp N  &kp M      &kp COMMA &kp DOT  &kp FSLH  &kp ENTER
+                 &mo NUMPAD &kp LGUI &kp LALT &kp SPACE  &mo SYMB_NAV    &kp ENTER  &kp BSPC  &kp DEL &kp RGUI  &kp RCTRL
+            >;
+        #endif
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
