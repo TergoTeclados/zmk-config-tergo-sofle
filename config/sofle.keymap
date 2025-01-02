@@ -50,7 +50,12 @@ name: name##_macro {                  \
 	wait-ms = <1>;                    \
 	bindings = <keys>;                \
 };
-MACRO(dongle_boot, &bootloader)
+
+/ {
+    macros {
+        MACRO(dongle_boot, &bootloader)
+    };
+};
 
 / {
     keymap {
