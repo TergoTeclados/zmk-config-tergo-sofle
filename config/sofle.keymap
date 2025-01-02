@@ -42,6 +42,15 @@
 };
 
 
+#define MACRO(name, keys)           \
+name: name##_macro {                  \
+	compatible = "zmk,behavior-macro";\
+	#binding-cells = <0>;             \
+	tap-ms = <1>;                     \
+	wait-ms = <1>;                    \
+	bindings = <keys>;                \
+};
+MACRO(dongle_boot, &bootloader)
 
 / {
     keymap {
@@ -140,11 +149,11 @@
         adjust_layer {
             display-name = "adjust";
             bindings = <
-&trans    &trans    &trans    &trans      &trans      &trans                        &trans    &trans   &trans    &trans    &trans   &trans
-&trans    &trans    &trans    &trans      &bootloader &trans                        &trans    &trans   &trans    &trans    &trans   &trans
-&trans    &trans    &trans    &trans      &trans      &trans                        &trans    &trans   &trans    &trans    &trans   &trans
-&trans    &trans    &to BASE  &to ADEPT   &to OTHER   &trans     &trans    &trans   &trans    &trans   &trans    &trans    &trans   &trans
-                    &trans    &trans      &trans      &trans     &trans    &trans   &trans    &trans   &trans    &trans
+&trans    &trans    &trans    &trans      &trans       &trans                        &trans    &trans   &trans    &trans    &trans   &trans
+&trans    &trans    &trans    &trans      &dongle_boot &trans                        &trans    &trans   &trans    &trans    &trans   &trans
+&trans    &trans    &trans    &trans      &trans       &trans                        &trans    &trans   &trans    &trans    &trans   &trans
+&trans    &trans    &to BASE  &to ADEPT   &to OTHER    &trans     &trans    &trans   &trans    &trans   &trans    &trans    &trans   &trans
+                    &trans    &trans      &trans       &trans     &trans    &trans   &trans    &trans   &trans    &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
