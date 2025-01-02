@@ -41,6 +41,8 @@
     flavor = "balanced";
 };
 
+
+
 / {
     keymap {
         compatible = "zmk,keymap";
@@ -138,11 +140,11 @@
         adjust_layer {
             display-name = "adjust";
             bindings = <
-&trans    &trans    &trans    &trans      &trans    &trans                        &trans    &trans   &trans    &trans    &trans   &trans
-&trans    &trans    &trans    &trans      &trans    &trans                        &trans    &trans   &trans    &trans    &trans   &trans
-&trans    &trans    &trans    &trans      &trans    &trans                        &trans    &trans   &trans    &trans    &trans   &trans
-&trans    &trans    &to BASE  &to ADEPT   &to OTHER &trans     &trans    &trans   &trans    &trans   &trans    &trans    &trans   &trans
-                    &trans    &trans      &trans    &trans     &trans    &trans   &trans    &trans   &trans    &trans
+&trans    &trans    &trans    &trans      &trans      &trans                        &trans    &trans   &trans    &trans    &trans   &trans
+&trans    &trans    &trans    &trans      &bootloader &trans                        &trans    &trans   &trans    &trans    &trans   &trans
+&trans    &trans    &trans    &trans      &trans      &trans                        &trans    &trans   &trans    &trans    &trans   &trans
+&trans    &trans    &to BASE  &to ADEPT   &to OTHER   &trans     &trans    &trans   &trans    &trans   &trans    &trans    &trans   &trans
+                    &trans    &trans      &trans      &trans     &trans    &trans   &trans    &trans   &trans    &trans
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
