@@ -73,7 +73,7 @@
 //        };
 
         base_layer {
-            display-name = "base";
+            display-name = "Base";
             bindings = <
 #ifdef USE_INTERNATIONAL_LAYOUT
 &kp ESC   &kp N1 &kp N2     &kp N3   &kp N4    &kp N5                               &kp N6 &kp N7     &kp N8    &kp N9   &kp N0    &kp MINUS
@@ -93,7 +93,7 @@
         };
 
         adept_layer {
-            display-name = "adept";
+            display-name = "Adept";
             bindings = <
 &trans    &trans     &trans     &trans      &trans      &trans                                      &trans    &trans      &trans      &trans     &trans        &trans
 &trans    &trans     &trans     &trans      &trans      &trans                                      &trans    &trans      &trans      &trans     &trans        &trans
@@ -107,7 +107,7 @@
 
         // By defaults its equal to base_layer. To be customized by user.
         other_layer {
-            display-name = "other";
+            display-name = "Other";
             bindings = <
 #ifdef USE_INTERNATIONAL_LAYOUT
 &kp ESC   &kp N1 &kp N2     &kp N3   &kp N4    &kp N5                               &kp N6 &kp N7     &kp N8    &kp N9   &kp N0    &kp MINUS
@@ -128,7 +128,7 @@
         };
 
         symb_nav_layer {
-            display-name = "symb_nav";
+            display-name = "SymNv";
             bindings = <
 #ifdef USE_INTERNATIONAL_LAYOUT
 &trans    &kp F1        &kp F2       &kp F3        &kp F4       &kp F5                        &kp F6    &kp F7       &kp F8    &kp F9        &kp F10           &kp F11
@@ -149,7 +149,7 @@
         };
 
         adjust_layer {
-            display-name = "adjust";
+            display-name = "Confg";
             bindings = <
 &trans    &trans    &trans    &trans      &trans     &trans                        &trans    &trans   &trans    &trans    &trans   &trans
 &trans    &trans    &trans    &trans      &trans     &trans                        &trans    &trans   &trans    &trans    &trans   &trans
@@ -162,7 +162,7 @@
         };
 
         media_layer {
-            display-name = "media";
+            display-name = "Media";
             bindings = <
 &trans    &trans    &trans    &trans      &trans    &trans                        &trans    &trans       &trans     &trans       &trans   &trans
 &trans    &trans    &trans    &trans      &trans    &trans                        &trans    &trans       &trans     &trans       &trans   &trans
@@ -175,7 +175,7 @@
         };
 
         numpad_layer {
-            display-name = "numpad";
+            display-name = "NumPd";
             bindings = <
 &trans    &trans    &trans    &trans      &trans    &trans                        &trans    &kp KP_NLCK &kp KP_SLASH  &kp KP_ASTERISK  &kp KP_MINUS   &trans
 &trans    &trans    &trans    &trans      &trans    &trans                        &trans    &kp KP_N7   &kp KP_N8     &kp KP_N9        &kp KP_PLUS    &trans
@@ -187,9 +187,8 @@
             sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
         };
 
-        // ToDo: scroll horizontal?
         mouse_layer {
-            display-name = "mouse";
+            display-name = "Mouse";
             bindings = <
 &trans    &trans    &trans    &trans      &trans    &trans                        &trans    &trans   &trans    &trans    &trans   &trans
 &trans    &trans    &trans    &trans      &trans    &trans                        &msc SCRL_UP    &trans   &mmv MOVE_UP    &trans    &trans   &trans
