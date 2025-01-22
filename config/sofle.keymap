@@ -32,13 +32,17 @@
 #define BR_LBKT RBKT
 #define BR_LBCT LS(RBKT)
 
+#define TAPPING_TERM 300
+
 &mt {
-    tapping-term-ms = <300>;
+    tapping-term-ms = <TAPPING_TERM>;
+    quick-tap-ms = <TAPPING_TERM>;
     flavor = "balanced";
 };
 
 &lt {
-    tapping-term-ms = <300>;
+    tapping-term-ms = <TAPPING_TERM>;
+    quick-tap-ms = <TAPPING_TERM>;
     flavor = "balanced";
 };
 
@@ -57,12 +61,6 @@
 
 
 / {
-    // EXT_POWER {
-    //     compatible = "zmk,ext-power-generic";
-    //     control-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
-    //     init-delay-ms = <50>;
-    // };
-
     keymap {
         compatible = "zmk,keymap";
 
