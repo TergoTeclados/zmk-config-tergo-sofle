@@ -21,8 +21,6 @@
 #define NUMPAD 6
 #define MOUSE 7
 
-//#define USE_INTERNATIONAL_LAYOUT
-
 // ABNT2 keycodes
 // Inspired by https://github.com/qmk/qmk_firmware/blob/master/quantum/keymap_extras/keymap_brazilian_abnt2.h
 #define BR_SLSH INT1
@@ -52,8 +50,8 @@
         compatible = "zmk,combos";
         combo_dongle_bootloader {
             // Faz o dongle entrar em modo de bootloader, para gravacao do firmware
-            timeout-ms = <50>;
-            key-positions = <50 51 58 59>;
+            timeout-ms = <30>;
+            key-positions = <50 51 58 59>; // 2 primeiras e 2 ultimas teclas da linha de teclas mais abaixo do teclado
             bindings = <&bootloader>;
         };
     };
