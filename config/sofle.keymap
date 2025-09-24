@@ -71,9 +71,9 @@
 
     behaviors {
         encoder_scroll: encoder_scroll {
-            compatible = "zmk,behavior-sensor-rotate";
-            label = "ENCODER_SCROLL";
+            compatible = "zmk,behavior-sensor-rotate-var";
             #sensor-binding-cells = <2>;
+            bindings = <&kp>, <&kp>;
             tap-ms = <100>; // Aumenta o tempo do pulso para 100ms
         };
     };
