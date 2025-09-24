@@ -52,7 +52,6 @@
 };
 
 
-// Combos do teclado
 / {
     combos {
         compatible = "zmk,combos";
@@ -67,6 +66,15 @@
             timeout-ms = <30>; // Tempo de tolerancia para apertar as teclas ao mesmo tempo
             key-positions = <50 59>; // primeira e última teclas da linha de teclas mais abaixo do teclado
             bindings = <&studio_unlock>; // Tecla a ser simulada ao apertar a combinação acima
+        };
+    };
+
+    behaviors {
+        encoder_scroll: encoder_scroll {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "ENCODER_SCROLL";
+            #binding-cells = <2>;
+            tap-ms = <100>; // Aumenta o tempo do pulso para 100ms
         };
     };
 };
@@ -88,7 +96,7 @@
 //                    &trans    &trans      &trans    &trans     &trans    &trans   &trans    &trans   &trans    &trans
 //            >;
 //
-//            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>; // Para o knob (encoder)
+//            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>; // Para o knob (encoder)
 //        };
 
         base_layer {
@@ -108,7 +116,7 @@
                  &mo NUMPAD &kp LGUI &kp LALT &kp SPACE  &mo SYMB_NAV    &kp ENTER  &kp BSPC  &kp DEL &kp RGUI  &kp RCTRL
 #endif
             >;
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         adept_layer {
@@ -121,7 +129,7 @@
                      &trans     &trans      &trans      &lt MOUSE SPACE  &lt SYMB_NAV TAB   &trans  &trans    &trans      &trans      &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         // By defaults its equal to base_layer. To be customized by user.
@@ -143,7 +151,7 @@
 #endif
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         symb_nav_layer {
@@ -164,7 +172,7 @@
 #endif
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         adjust_layer {
@@ -177,7 +185,7 @@
                &trans       &trans       &trans       &trans       &trans    &trans    &trans   &trans   &trans  &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         media_layer {
@@ -190,7 +198,7 @@
                     &trans    &trans      &trans    &trans     &trans    &trans   &trans    &trans       &trans     &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         numpad_layer {
@@ -203,7 +211,7 @@
                     &trans    &trans      &trans    &trans     &trans    &trans   &trans    &kp KP_N0   &kp KP_N0     &kp KP_DOT
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         mouse_layer {
@@ -216,7 +224,7 @@
                     &trans    &trans      &trans     &trans    &trans    &mkp RCLK   &mkp LCLK      &mkp MCLK      &trans         &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp SCRL_LEFT SCRL_RIGHT &inc_dec_kp SCRL_UP SCRL_DOWN>;
+            sensor-bindings = <&encoder_scroll SCRL_LEFT SCRL_RIGHT &encoder_scroll SCRL_UP SCRL_DOWN>;
         };
 
         // Extra layers, so it can be added and customized in ZMK Studio
