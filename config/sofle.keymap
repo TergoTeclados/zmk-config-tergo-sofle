@@ -73,7 +73,7 @@
         encoder_scroll: encoder_scroll {
             compatible = "zmk,behavior-sensor-rotate";
             label = "ENCODER_SCROLL";
-            #binding-cells = <2>;
+            #sensor-binding-cells = <2>;
             tap-ms = <100>; // Aumenta o tempo do pulso para 100ms
         };
     };
