@@ -57,8 +57,10 @@ Na pasta [boards/shields](./boards/shields/) você encontra "shields".
 "Shields" são customizações adicionais que originam do hardware.
 
 Nela você encontrará as shields:
-- `dongle_display`, que configura uma tela para o receptor;
-- `sofle`, que cria as **metades** do teclado.
+- `sofle`, que cria o receptor (`sofle_dongle`) e overlays de OLED;
+- `sofle_dongle_ssd1306` / `sofle_dongle_sh1106`, que escolhem o controlador da tela.
+
+A shield `dongle_display` (widgets da tela do receptor) vem do módulo [englmaxi/zmk-dongle-display](https://github.com/englmaxi/zmk-dongle-display), declarado em [config/west.yml](config/west.yml).
 
 ## O coração do seu teclado é o receptor (dongle)
 
