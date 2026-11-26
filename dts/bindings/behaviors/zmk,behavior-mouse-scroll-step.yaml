@@ -1,0 +1,18 @@
+# Copyright (c) 2026 Tergo Teclados
+# SPDX-License-Identifier: MIT
+
+description: Immediate single-step mouse scroll behavior compatible with ZMK Studio and rotary encoders
+
+compatible: "zmk,behavior-mouse-scroll-step"
+
+include: zero_param.yaml
+
+properties:
+  scroll-x:
+    type: int
+    default: 0
+    description: Horizontal scroll delta per trigger (positive = right, negative = left).
+  scroll-y:
+    type: int
+    default: 0
+    description: Vertical scroll delta per trigger (positive = up, negative = down).

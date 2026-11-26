@@ -59,6 +59,7 @@
 
 
 // Behavior customizado que redireciona o giro dos knobs para posicoes virtuais do keymap
+// e behaviors de scroll de mouse por passo (compativeis com ZMK Studio e knobs)
 / {
     behaviors {
         enc_key_pos: behavior_sensor_rotate_key_pos {
@@ -66,6 +67,34 @@
             #sensor-binding-cells = <2>;
             display-name = "Encoder Key Pos";
             tap-ms = <5>;
+        };
+
+        scrl_up: behavior_mouse_scroll_up {
+            compatible = "zmk,behavior-mouse-scroll-step";
+            #binding-cells = <0>;
+            display-name = "Scroll Up";
+            scroll-y = <1>;
+        };
+
+        scrl_dn: behavior_mouse_scroll_down {
+            compatible = "zmk,behavior-mouse-scroll-step";
+            #binding-cells = <0>;
+            display-name = "Scroll Dn";
+            scroll-y = <(-1)>;
+        };
+
+        scrl_lt: behavior_mouse_scroll_left {
+            compatible = "zmk,behavior-mouse-scroll-step";
+            #binding-cells = <0>;
+            display-name = "Scroll Lt";
+            scroll-x = <(-1)>;
+        };
+
+        scrl_rt: behavior_mouse_scroll_right {
+            compatible = "zmk,behavior-mouse-scroll-step";
+            #binding-cells = <0>;
+            display-name = "Scroll Rt";
+            scroll-x = <1>;
         };
     };
 };
