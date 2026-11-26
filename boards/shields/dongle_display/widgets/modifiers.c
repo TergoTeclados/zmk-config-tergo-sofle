@@ -10,13 +10,13 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
+#include "modifiers.h"
+
 #include <zmk/display.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/keycode_state_changed.h>
 #include <zmk/hid.h>
 #include <dt-bindings/zmk/modifiers.h>
-
-#include "modifiers.h"
 
 struct modifiers_state {    
     uint8_t modifiers;
