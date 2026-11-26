@@ -1,79 +1,99 @@
-# Compilação Local do Firmware ZMK — Tergo Sofle
+# Compilação Local do Firmware ZMK (Tergo Sofle)
 
-Esta pasta contém toda a documentação e os scripts de automação para compilar localmente no **Windows** o firmware do **Tergo Sofle** (dongle central + metades esquerda e direita + reset), incluindo suporte completo para **editar o código-fonte original do ZMK** (`zmkfirmware/zmk`).
+Esta pasta contém a documentação e os scripts auxiliares para compilar localmente no **Windows, Linux ou macOS** o firmware do **Tergo Sofle** (receptor/dongle central, metades esquerda e direita e reset), incluindo suporte completo para editar tanto o `zmk-config-tergo-sofle` quanto o código-fonte do fork `TergoTeclados/zmk`.
 
 ---
 
-## Quick Start (Compilar Agora)
+## Quick Start
 
-Se o ambiente já foi preparado em `C:\Users\victor\Documents\GitHub\zmk-workspace` (ou após rodar `setup-env.ps1`), abra o PowerShell na raiz do `zmk-config-tergo-sofle` e use o script auxiliar:
+### 1. Preparar o ambiente (apenas uma vez)
 
+Pré-requisitos no PATH: `git`, [`uv`](https://docs.astral.sh/uv/) e `tar` (no Linux/macOS, também `curl`). Não exige Docker, WSL nem permissões de administrador.
+
+**Windows (PowerShell):**
 ```powershell
-# 1. Listar todos os alvos definidos no build.yaml
+.\local-build\setup-env.ps1
+```
+
+**Linux / macOS (Bash):**
+```bash
+chmod +x ./local-build/setup-env.sh ./local-build/build-local.sh
+./local-build/setup-env.sh
+```
+
+### 2. Compilar o firmware
+
+**Windows (PowerShell):**
+```powershell
+# Listar os 7 alvos do build.yaml
 .\local-build\build-local.ps1 -List
 
-# 2. Compilar apenas o dongle ABNT2 (display SSD1306 / V2)
+# Compilar apenas o receptor ABNT2 (display SSD1306 / V2)
 .\local-build\build-local.ps1 -Target sofle_receptor_ABNT2_displayV2
 
-# 3. Compilar mais de um alvo (ex.: dongle + metade esquerda)
-.\local-build\build-local.ps1 -Target sofle_receptor_ABNT2_displayV2,sofle_esquerdo
-
-# 4. Forçar recompilação limpa (pristine) após alterar .conf, .overlay ou .keymap
+# Recompilação limpa (pristine) após alterar .conf, .overlay ou .keymap
 .\local-build\build-local.ps1 -Target sofle_receptor_ABNT2_displayV2 -Pristine
 
-# 5. Compilar TODOS os 7 alvos do build.yaml
-.\local-build\build-local.ps1 -All
+# Compilar todos os 7 alvos
+.\local-build\build-local.ps1 -All -Pristine
 ```
 
-Os arquivos `.uf2` prontos para gravar no teclado são copiados automaticamente para:
+**Linux / macOS (Bash):**
+```bash
+# Listar os 7 alvos do build.yaml
+./local-build/build-local.sh --list
 
-```text
-zmk-config-tergo-sofle\build-artifacts\<artifact-name>.uf2
+# Compilar apenas o receptor ABNT2 (display SSD1306 / V2)
+./local-build/build-local.sh --target sofle_receptor_ABNT2_displayV2
+
+# Recompilação limpa (pristine) após alterar .conf, .overlay ou .keymap
+./local-build/build-local.sh --target sofle_receptor_ABNT2_displayV2 --pristine
+
+# Compilar todos os 7 alvos
+./local-build/build-local.sh --all --pristine
 ```
 
-*(A pasta `build-artifacts/` é ignorada pelo Git via `.gitignore`.)*
+Os arquivos `.uf2` prontos para gravar no teclado são copiados automaticamente para `build-artifacts/<artifact-name>.uf2` (pasta ignorada pelo Git via `.gitignore`).
 
 ---
 
-## Como as Pastas Estão Organizadas
+## Como as pastas ficam organizadas
 
 ```text
-C:\Users\victor\Documents\GitHub\
-├── zmk-config-tergo-sofle\          ← SUA configuração (shields, keymap, conf, build.yaml)
-│   ├── config\                      ← sofle.keymap, sofle.conf, west.yml (aponta para TergoTeclados/zmk @ tergo-v0.3)
-│   ├── boards\shields\              ← sofle_dongle, oled SSD1306/SH1106, dongle_display
-│   ├── zephyr\module.yml            ← Registra este repo como módulo Zephyr
-│   ├── build-artifacts\             ← Saída local dos .uf2 (ignorado pelo Git)
-│   └── local-build\                 ← Esta documentação e scripts PowerShell
+<sua-pasta-de-projetos>/
+├── zmk-config-tergo-sofle/     <- Configuração (keymap, conf, shields, behaviors locais, build.yaml)
+│   ├── config/                 <- sofle.keymap, sofle.conf, west.yml (aponta para TergoTeclados/zmk)
+│   ├── boards/shields/         <- sofle_dongle, OLED SSD1306/SH1106, dongle_display
+│   ├── src/behaviors/          <- Behaviors locais (giro dos knobs no Studio, scroll por passo)
+│   ├── dts/bindings/           <- Bindings Devicetree dos behaviors locais
+│   ├── zephyr/module.yml       <- Registra este repositório como módulo Zephyr
+│   ├── build-artifacts/        <- Saída local dos .uf2 (ignorado pelo Git)
+│   └── local-build/            <- Esta documentação e scripts auxiliares
 │
-├── zmk\                             ← Fork TergoTeclados/zmk (branch tergo-v0.3) + workspace West
-│   ├── app\                         ← Código-fonte do ZMK (onde você faz alterações no core!)
-│   ├── zephyr\                      ← RTOS Zephyr v3.5.0+zmk-fixes (baixado pelo west; ignorado pelo Git)
-│   ├── modules\                     ← HAL Nordic, LVGL, nanopb, zmk-studio-messages (ignorado pelo Git)
-│   └── build\                       ← Diretórios de compilação intermediários por alvo (ignorado pelo Git)
+├── zmk/                        <- Fork TergoTeclados/zmk (branch tergo-v0.3) + workspace West
+│   ├── app/                    <- Código-fonte do ZMK
+│   ├── zephyr/                 <- RTOS Zephyr v3.5.0+zmk-fixes (gerenciado pelo west)
+│   ├── modules/                <- HAL Nordic, LVGL, nanopb, zmk-studio-messages
+│   └── build/                  <- Diretórios de compilação intermediários por alvo
 │
-└── zmk-workspace\                   ← Toolchain portável local (fora dos repositórios Git)
-    ├── .venv\                       ← Python 3.12 isolado (west, cmake, ninja, deps Zephyr)
-    └── tools\
-        ├── zephyr-sdk-0.16.8\       ← Compilador ARM (arm-zephyr-eabi-gcc)
-        └── protoc\                  ← Compilador Protobuf (usado pelo ZMK Studio / nanopb)
+└── zmk-workspace/              <- Toolchain isolada (.venv Python 3.12, Zephyr SDK 0.16.8 ARM, protoc)
 ```
 
 ---
 
-## Índice da Documentação
+## Índice da documentação técnica
 
 | Guia | O que você vai aprender |
 | --- | --- |
-| [01 — Arquitetura do ZMK e deste repositório](./01-arquitetura-zmk.md) | Como Zephyr, ZMK, West, Devicetree, Kconfig, Shields e Dongle funcionam juntos, e o que a pipeline na nuvem faz por baixo dos panos. |
-| [02 — Preparação do Ambiente no Windows](./02-setup-ambiente-windows.md) | Passo a passo completo (automatizado e manual) para montar a toolchain nativa no Windows, além do comparativo com WSL 2 e Docker. |
-| [03 — Compilação Local na Prática](./03-compilacao-local.md) | Todos os 7 alvos do `build.yaml`, uso do `build-local.ps1`, comandos `west build` manuais, build incremental vs pristine e arquivos de diagnóstico. |
-| [04 — Modificando o Código-Fonte do ZMK](./04-modificando-codigo-zmk.md) | Mapa de `zmk/app/src/`, fluxo Git com branch/fork, debug via USB logging e como apontar o `config/west.yml` para seu fork no GitHub Actions. |
-| [05 — Problemas Encontrados e Ajustes Feitos](./05-problemas-encontrados.md) | Registro técnico das incompatibilidades encontradas no Windows (LVGL + macro `C`, `nanopb`/`setuptools`, `cmake<4`, `zephyr/module.yml`) e como foram resolvidas. |
+| [01 - Arquitetura do ZMK e deste repositório](./01-arquitetura-zmk.md) | Como Zephyr, ZMK, West, Devicetree, Kconfig, Shields e Dongle funcionam juntos. |
+| [02 - Preparação do ambiente (Windows)](./02-setup-ambiente-windows.md) | Passo a passo detalhado do ambiente nativo no Windows e comparativo com WSL 2 e Docker. |
+| [03 - Compilação local na prática](./03-compilacao-local.md) | Todos os 7 alvos do `build.yaml`, uso dos scripts, comandos `west build` manuais e build incremental vs pristine. |
+| [04 - Modificando o código-fonte do ZMK](./04-modificando-codigo-zmk.md) | Mapa de `zmk/app/src/`, fluxo Git com o fork `TergoTeclados/zmk`, debug via USB logging e GitHub Actions. |
+| [05 - Problemas encontrados e ajustes feitos](./05-problemas-encontrados.md) | Incompatibilidades conhecidas (LVGL + macro `C` no Windows, `nanopb`/`setuptools`, `cmake<4`, `zephyr/module.yml`) e como foram resolvidas. |
 
 ---
 
-## Scripts Disponíveis
+## Scripts disponíveis
 
-- [`setup-env.ps1`](./setup-env.ps1): Recria ou atualiza o `zmk-workspace` do zero em qualquer máquina Windows (requer apenas `git`, `uv` e `tar` nativo do Windows — sem precisar de Docker, WSL ou permissões de administrador).
-- [`build-local.ps1`](./build-local.ps1): Lê automaticamente o [`build.yaml`](../build.yaml), executa `west build` (incremental por padrão ou `-Pristine`) e entrega os `.uf2` nomeados em `build-artifacts/`.
+- [`setup-env.ps1`](./setup-env.ps1) (Windows) e [`setup-env.sh`](./setup-env.sh) (Linux / macOS): criam ou atualizam o `zmk-workspace` e o workspace West em `../zmk` de forma idempotente.
+- [`build-local.ps1`](./build-local.ps1) (Windows) e [`build-local.sh`](./build-local.sh) (Linux / macOS): leem o [`build.yaml`](../build.yaml), executam `west build` (incremental por padrão ou pristine) e entregam os `.uf2` em `build-artifacts/`.
