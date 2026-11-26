@@ -40,22 +40,23 @@ zmk-config-tergo-sofle\build-artifacts\<artifact-name>.uf2
 ```text
 C:\Users\victor\Documents\GitHub\
 ├── zmk-config-tergo-sofle\          ← SUA configuração (shields, keymap, conf, build.yaml)
-│   ├── config\                      ← sofle.keymap, sofle.conf, west.yml
+│   ├── config\                      ← sofle.keymap, sofle.conf, west.yml (aponta para TergoTeclados/zmk @ tergo-v0.3)
 │   ├── boards\shields\              ← sofle_dongle, oled SSD1306/SH1106, dongle_display
 │   ├── zephyr\module.yml            ← Registra este repo como módulo Zephyr
 │   ├── build-artifacts\             ← Saída local dos .uf2 (ignorado pelo Git)
 │   └── local-build\                 ← Esta documentação e scripts PowerShell
 │
-└── zmk-workspace\                   ← Ambiente de build local (fora deste repo)
+├── zmk\                             ← Fork TergoTeclados/zmk (branch tergo-v0.3) + workspace West
+│   ├── app\                         ← Código-fonte do ZMK (onde você faz alterações no core!)
+│   ├── zephyr\                      ← RTOS Zephyr v3.5.0+zmk-fixes (baixado pelo west; ignorado pelo Git)
+│   ├── modules\                     ← HAL Nordic, LVGL, nanopb, zmk-studio-messages (ignorado pelo Git)
+│   └── build\                       ← Diretórios de compilação intermediários por alvo (ignorado pelo Git)
+│
+└── zmk-workspace\                   ← Toolchain portável local (fora dos repositórios Git)
     ├── .venv\                       ← Python 3.12 isolado (west, cmake, ninja, deps Zephyr)
-    ├── tools\
-    │   ├── zephyr-sdk-0.16.8\       ← Compilador ARM (arm-zephyr-eabi-gcc)
-    │   └── protoc\                  ← Compilador Protobuf (usado pelo ZMK Studio / nanopb)
-    └── zmk\                         ← Clone do repositório zmkfirmware/zmk (v0.3) + workspace West
-        ├── app\                     ← Código-fonte do ZMK (onde você faz alterações no core!)
-        ├── zephyr\                  ← RTOS Zephyr v3.5.0+zmk-fixes (baixado pelo west)
-        ├── modules\                 ← HAL Nordic, LVGL, nanopb, zmk-studio-messages, etc.
-        └── build\                   ← Diretórios de compilação intermediários por alvo
+    └── tools\
+        ├── zephyr-sdk-0.16.8\       ← Compilador ARM (arm-zephyr-eabi-gcc)
+        └── protoc\                  ← Compilador Protobuf (usado pelo ZMK Studio / nanopb)
 ```
 
 ---

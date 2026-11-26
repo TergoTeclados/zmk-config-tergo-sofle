@@ -90,15 +90,20 @@ Observe os 3 arquivos que controlam a compilação no GitHub Actions:
 1. **[`.github/workflows/build.yml`](../.github/workflows/build.yml)**:
    Chama o workflow reutilizável oficial `zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3`.
 2. **[`config/west.yml`](../config/west.yml)**:
-   Diz ao West qual versão do ZMK baixar:
+   Diz ao West qual repositório e revisão do ZMK baixar (nesta branch, já apontando para o fork da empresa `TergoTeclados/zmk`):
    ```yaml
+   remotes:
+     - name: zmkfirmware
+       url-base: https://github.com/zmkfirmware
+     - name: tergoteclados
+       url-base: https://github.com/TergoTeclados
    projects:
      - name: zmk
-       remote: zmkfirmware
-       revision: v0.3
+       remote: tergoteclados
+       revision: tergo-v0.3
        import: app/west.yml
    ```
-   O `import: app/west.yml` puxa automaticamente o manifesto interno do ZMK (`v0.3`), que por sua vez baixa `zmkfirmware/zephyr` na revisão `v3.5.0+zmk-fixes`, `nanopb`, `zmk-studio-messages` e os módulos HAL do Zephyr.
+   O `import: app/west.yml` puxa automaticamente o manifesto interno do ZMK (`tergo-v0.3`, baseado na `v0.3`), que por sua vez baixa `zmkfirmware/zephyr` na revisão `v3.5.0+zmk-fixes`, `nanopb`, `zmk-studio-messages` e os módulos HAL do Zephyr.
 3. **[`build.yaml`](../build.yaml)**:
    Lista a matriz dos 7 alvos a compilar (4 variantes de dongle, 2 metades e 1 reset).
 

@@ -43,7 +43,7 @@ Execute a partir da raiz do repositório `zmk-config-tergo-sofle`:
 ```
 
 Ao final de cada alvo, o script:
-1. Compila dentro de `zmk-workspace\zmk\build\<alvo>\` (cada alvo tem sua própria pasta de build, então alternar entre dongle e metade esquerda **não invalida o cache** do outro!).
+1. Compila dentro de `C:\Users\victor\Documents\GitHub\zmk\build\<alvo>\` (cada alvo tem sua própria pasta de build, então alternar entre dongle e metade esquerda **não invalida o cache** do outro!).
 2. Copia `zephyr\zmk.uf2` para `zmk-config-tergo-sofle\build-artifacts\<alvo>.uf2`.
 3. Exibe uma tabela com tamanho do arquivo e tempo de compilação.
 
@@ -56,11 +56,12 @@ Para entender exatamente o que o script executa (ou para passar flags experiment
 ```powershell
 # 1. Ative o ambiente na sessão do PowerShell
 $ws = "C:\Users\victor\Documents\GitHub\zmk-workspace"
+$zmk = "C:\Users\victor\Documents\GitHub\zmk"
 $cfgRepo = "C:/Users/victor/Documents/GitHub/zmk-config-tergo-sofle"
 $env:PATH = "$ws\.venv\Scripts;$ws\tools\protoc\bin;$env:PATH"
 $env:ZEPHYR_TOOLCHAIN_VARIANT = "zephyr"
 $env:ZEPHYR_SDK_INSTALL_DIR = "$ws\tools\zephyr-sdk-0.16.8"
-cd "$ws\zmk"
+cd "$zmk"
 ```
 
 ### Exemplo A — Dongle ABNT2 Display V2 (SSD1306)

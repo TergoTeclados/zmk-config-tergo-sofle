@@ -25,26 +25,31 @@ param(
     [switch]$List,
     [switch]$Pristine,
     [switch]$UsbLogging,
-    [string]$WorkspacePath = ""
+    [string]$WorkspacePath = "",
+    [string]$ZmkPath = ""
 )
 
 $ErrorActionPreference = "Stop"
 
-$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$repoRoot  = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$parentDir = Split-Path $repoRoot -Parent
 if ([string]::IsNullOrWhiteSpace($WorkspacePath)) {
-    $WorkspacePath = Join-Path (Split-Path $repoRoot -Parent) "zmk-workspace"
+    $WorkspacePath = Join-Path $parentDir "zmk-workspace"
+}
+if ([string]::IsNullOrWhiteSpace($ZmkPath)) {
+    $ZmkPath = Join-Path $parentDir "zmk"
 }
 
 $venvScripts = Join-Path $WorkspacePath ".venv\Scripts"
 $venvPython  = Join-Path $venvScripts "python.exe"
 $sdkDir      = Join-Path $WorkspacePath "tools\zephyr-sdk-0.16.8"
 $protocExe   = Join-Path $WorkspacePath "tools\protoc\bin\protoc.exe"
-$zmkDir      = Join-Path $WorkspacePath "zmk"
+$zmkDir      = $ZmkPath
 $buildYaml   = Join-Path $repoRoot "build.yaml"
 $outDir      = Join-Path $repoRoot "build-artifacts"
 
 if (-not (Test-Path $venvPython) -or -not (Test-Path $zmkDir)) {
-    throw "Workspace nao encontrado em '$WorkspacePath'. Execute '.\local-build\setup-env.ps1' primeiro."
+    throw "Toolchain ('$WorkspacePath') ou repositorio ZMK ('$zmkDir') nao encontrado. Execute '.\local-build\setup-env.ps1' primeiro."
 }
 
 # Usa Python + PyYAML do venv para ler build.yaml e dividir cmake-args com shlex

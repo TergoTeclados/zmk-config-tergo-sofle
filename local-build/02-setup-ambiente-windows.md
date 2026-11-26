@@ -26,8 +26,8 @@ Tudo fica contido em uma única pasta externa ao repositório de configuração:
 | Ninja | `.venv\Scripts\ninja.exe` | 1.13.x | Executor paralelo de compilação |
 | Protobuf + setuptools | `.venv\` | `protobuf 5.x`, `setuptools <81` | Geração dos arquivos `.pb.c`/`.pb.h` do `nanopb` (ZMK Studio) |
 | protoc | `tools\protoc\bin\protoc.exe` | 28.3 | Binário compilador de `.proto` para o `nanopb` |
-| Zephyr SDK (minimal + ARM) | `tools\zephyr-sdk-0.16.8\` | 0.16.8 (`gcc 12.2.0`) | Cross-compiler `arm-zephyr-eabi-gcc` para nRF52840 (~67 MB compactado em vez de ~10 GB do SDK completo) |
-| ZMK + Zephyr + Módulos | `zmk\` | ZMK `v0.3` / Zephyr `v3.5.0+zmk-fixes` | Código-fonte do firmware e bibliotecas HAL/LVGL/nanopb |
+| Zephyr SDK (minimal + ARM) | `zmk-workspace\tools\zephyr-sdk-0.16.8\` | 0.16.8 (`gcc 12.2.0`) | Cross-compiler `arm-zephyr-eabi-gcc` para nRF52840 (~67 MB compactado em vez de ~10 GB do SDK completo) |
+| ZMK + Zephyr + Módulos | `..\zmk\` (`C:\Users\victor\Documents\GitHub\zmk`) | `TergoTeclados/zmk` (`tergo-v0.3`) / Zephyr `v3.5.0+zmk-fixes` | Fork do firmware da Tergo + bibliotecas HAL/LVGL/nanopb |
 
 **Consumo total em disco:** ~5,5 GB (usando clones enxutos `--filter=tree:0` e SDK minimal apenas para ARM).
 
@@ -41,10 +41,10 @@ Para recriar o ambiente do zero em outra máquina Windows (ou atualizar dependê
 .\local-build\setup-env.ps1
 ```
 
-Você também pode apontar para outro diretório ou para o **seu fork do ZMK**:
+Por padrão, o script instala a toolchain em `..\zmk-workspace` e usa/clona o fork `https://github.com/TergoTeclados/zmk.git` (branch `tergo-v0.3`) em `..\zmk`. Você também pode sobrescrever os caminhos ou a branch:
 
 ```powershell
-.\local-build\setup-env.ps1 -WorkspacePath "C:\zmk-workspace" -ZmkRepoUrl "https://github.com/SEU-USUARIO/zmk.git" -ZmkRevision "sua-branch"
+.\local-build\setup-env.ps1 -WorkspacePath "C:\zmk-workspace" -ZmkPath "C:\zmk" -ZmkRevision "tergo-v0.3"
 ```
 
 O script é idempotente: se rodar novamente, ele pula o que já está baixado e apenas atualiza o necessário.
@@ -80,12 +80,13 @@ Remove-Item "$tools\sdk.7z", "$tools\arm.7z", "$tools\protoc.zip"
 ```
 *(O `tar.exe` embutido no Windows usa `libarchive` e extrai arquivos `.7z` e `.zip` nativamente, sem precisar instalar 7-Zip.)*
 
-### Passo 3 — Clonar o ZMK `v0.3` e inicializar o workspace West
+### Passo 3 — Clonar o fork `TergoTeclados/zmk` (`tergo-v0.3`) e inicializar o workspace West
 ```powershell
+$zmk = "C:\Users\victor\Documents\GitHub\zmk"
 $env:PATH = "$ws\.venv\Scripts;$ws\tools\protoc\bin;$env:PATH"
 
-git clone --branch v0.3 https://github.com/zmkfirmware/zmk.git "$ws\zmk"
-cd "$ws\zmk"
+git clone --branch tergo-v0.3 https://github.com/TergoTeclados/zmk.git "$zmk"
+cd "$zmk"
 
 # Cria .west/ dentro de zmk/ apontando para o manifesto zmk/app/west.yml
 west init -l app
@@ -95,8 +96,8 @@ west init -l app
 west update --fetch-opt=--filter=tree:0
 ```
 
-> **Por que `west init -l app` dentro de `zmk/`?**
-> O próprio `.gitignore` do repositório oficial do ZMK já ignora `/.west`, `/zephyr`, `/modules`, `/tools`, `/bootloader` e `/build`. Assim, `git status` dentro de `zmk\` continua 100% limpo mesmo com todo o ecossistema Zephyr dentro dele!
+> **Por que `west init -l app` dentro de `C:\Users\victor\Documents\GitHub\zmk`?**
+> O próprio `.gitignore` do repositório do ZMK já ignora `/.west`, `/zephyr`, `/modules`, `/tools`, `/bootloader` e `/build`. Assim, `git status` dentro de `zmk\` continua 100% limpo mesmo com todo o ecossistema Zephyr dentro dele!
 
 ### Passo 4 — Registrar pacotes CMake e instalar dependências Python do Zephyr
 ```powershell
@@ -104,7 +105,7 @@ west update --fetch-opt=--filter=tree:0
 west zephyr-export
 
 # Instala pyelftools, intelhex, anytree, pyserial, etc.
-uv pip install --python "$ws\.venv\Scripts\python.exe" -r "$ws\zmk\zephyr\scripts\requirements-base.txt"
+uv pip install --python "$ws\.venv\Scripts\python.exe" -r "$zmk\zephyr\scripts\requirements-base.txt"
 
 # Registra o Zephyr SDK no CMake do usuário (sem precisar do setup.cmd que exige wget)
 cmake -P "$ws\tools\zephyr-sdk-0.16.8\cmake\zephyr_sdk_export.cmake"
@@ -114,12 +115,13 @@ cmake -P "$ws\tools\zephyr-sdk-0.16.8\cmake\zephyr_sdk_export.cmake"
 
 ## 5. Como Ativar o Ambiente Manualmente em um Terminal
 
-Se quiser rodar comandos `west` manualmente (em vez de usar o `build-local.ps1`), basta executar estas 4 linhas na sua janela do PowerShell:
+Se quiser rodar comandos `west` manualmente (em vez de usar o `build-local.ps1`), basta executar estas 5 linhas na sua janela do PowerShell:
 
 ```powershell
 $ws = "C:\Users\victor\Documents\GitHub\zmk-workspace"
+$zmk = "C:\Users\victor\Documents\GitHub\zmk"
 $env:PATH = "$ws\.venv\Scripts;$ws\tools\protoc\bin;$env:PATH"
 $env:ZEPHYR_TOOLCHAIN_VARIANT = "zephyr"
 $env:ZEPHYR_SDK_INSTALL_DIR = "$ws\tools\zephyr-sdk-0.16.8"
-cd "$ws\zmk"
+cd "$zmk"
 ```

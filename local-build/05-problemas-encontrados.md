@@ -8,7 +8,7 @@ Durante a investigação e a validação real da compilação nativa no Windows,
 
 - **Causa:** O repositório `zmk-config-tergo-sofle` contém `zephyr/module.yml` para registrar os shields locais (`boards/shields/`). Se você rodar `west init` diretamente na raiz do `zmk-config-tergo-sofle`, o `west update` tentará clonar o Zephyr RTOS em `zmk-config-tergo-sofle/zephyr/`, colidindo com a pasta versionada no Git.
 - **Como o CI resolve:** O workflow `build-user-config.yml@v0.3` detecta `zephyr/module.yml`, cria um workspace temporário separado e passa `-DZMK_EXTRA_MODULES=<repo>`.
-- **Solução adotada localmente:** O workspace West fica fora deste repositório (`..\zmk-workspace\zmk`), e o `build-local.ps1` passa sempre `-DZMK_CONFIG=<repo>/config` e `-DZMK_EXTRA_MODULES=<repo>`.
+- **Solução adotada localmente:** O workspace West fica no repositório irmão `..\zmk` (`TergoTeclados/zmk`, que já ignora `.west/`, `zephyr/`, `modules/` e `build/` via `.gitignore`), enquanto a toolchain fica em `..\zmk-workspace`, e o `build-local.ps1` passa sempre `-DZMK_CONFIG=<repo>/config` e `-DZMK_EXTRA_MODULES=<repo>`.
 
 ---
 

@@ -1,29 +1,29 @@
-# 04 — Modificando o Código-Fonte Original do ZMK
+# 04 — Modificando o Código-Fonte do ZMK (Fork `TergoTeclados/zmk`)
 
-Este guia mostra onde fica cada funcionalidade dentro do código-fonte do ZMK (`zmk-workspace\zmk\`), como organizar suas modificações com Git, como depurar no hardware real com logs USB e como fazer a pipeline na nuvem (GitHub Actions) usar suas mudanças no futuro.
+Este guia mostra onde fica cada funcionalidade dentro do código-fonte do ZMK (`C:\Users\victor\Documents\GitHub\zmk`), como trabalhar na branch `tergo-v0.3` do fork `TergoTeclados/zmk`, como depurar no hardware real com logs USB e como manter o fluxo de build automático na nuvem (GitHub Actions).
 
 ---
 
 ## 1. Antes de Mexer no Core: Você Realmente Precisa Alterar o ZMK?
 
-Muitas customizações no ZMK **não exigem** modificar `zmkfirmware/zmk` — elas podem viver no próprio `zmk-config-tergo-sofle` (ou em um módulo Zephyr externo):
+Muitas customizações no ZMK **não exigem** modificar o core — elas podem viver no próprio `zmk-config-tergo-sofle` (ou em um módulo Zephyr externo):
 
 - **Não precisa alterar o core do ZMK:**
   - Keymaps, combos, macros, hold-tap, mod-morph, tap-dance (`config/sofle.keymap`)
   - Parâmetros de sleep, potência TX BLE, mouse, debounce (`config/sofle.conf`)
   - Telas customizadas, ícones e widgets LVGL (`boards/shields/dongle_display/`)
   - Novo *behavior* ou *input processor* próprio (pode ser adicionado como driver/módulo via `zephyr/module.yml`)
-- **Precisa alterar o core do ZMK (`zmk-workspace\zmk\app\`):**
+- **Precisa alterar o core do ZMK (`C:\Users\victor\Documents\GitHub\zmk\app\`):**
   - Mudanças internas no protocolo split BLE (`src/split/`)
   - Alterações na lógica interna de `behaviors` existentes, `hid.c`, `endpoints.c`, `ble.c`, `pm.c` (power management / deep sleep) ou `studio/`
   - Correções de bugs ou backports de versões mais novas do ZMK para a base `v0.3`
 
 ---
 
-## 2. Mapa do Código-Fonte do ZMK (`zmk-workspace\zmk\app\`)
+## 2. Mapa do Código-Fonte do ZMK (`C:\Users\victor\Documents\GitHub\zmk\app\`)
 
 ```text
-zmk-workspace\zmk\app\
+C:\Users\victor\Documents\GitHub\zmk\app\
 ├── CMakeLists.txt              ← Lista todos os .c compilados e condições Kconfig
 ├── Kconfig / Kconfig.defaults  ← Declaração de opções CONFIG_ZMK_*
 ├── include/zmk/                ← Headers públicos internos (#include <zmk/...>)
@@ -52,31 +52,34 @@ zmk-workspace\zmk\app\
 
 ---
 
-## 3. Fluxo de Trabalho Recomendado ao Editar o ZMK
+## 3. Fluxo de Trabalho com o Fork `TergoTeclados/zmk`
 
-Atualmente, `zmk-workspace\zmk` está no commit da tag `v0.3` (*detached HEAD*). Antes de fazer alterações, crie uma branch própria lá dentro:
+O repositório `C:\Users\victor\Documents\GitHub\zmk` já está configurado com:
+- `origin` → `https://github.com/TergoTeclados/zmk.git`
+- `upstream` → `https://github.com/zmkfirmware/zmk.git`
+- Branch ativa: **`tergo-v0.3`** (criada a partir da tag `v0.3` e já publicada em `origin/tergo-v0.3`).
 
-```powershell
-cd C:\Users\victor\Documents\GitHub\zmk-workspace\zmk
-git checkout -b tergo-custom
-```
+Os dois repositórios têm **branches independentes**:
+- Em `zmk`: a branch `tergo-v0.3` guarda as alterações no código-fonte do firmware (ou você pode criar sub-branches de feature a partir de `tergo-v0.3` e abrir PR para `tergo-v0.3`).
+- Em `zmk-config-tergo-sofle`: a branch `local-build-setup` já tem o [`config/west.yml`](../config/west.yml) apontando para `TergoTeclados/zmk` na revisão `tergo-v0.3`.
 
-A partir daí, o ciclo de desenvolvimento é super rápido:
+### Ciclo de desenvolvimento diário
 
-1. Edite o(s) arquivo(s) desejado(s) em `C:\Users\victor\Documents\GitHub\zmk-workspace\zmk\app\src\...`
+1. Edite o(s) arquivo(s) desejado(s) em `C:\Users\victor\Documents\GitHub\zmk\app\src\...`
 2. Volte para `zmk-config-tergo-sofle` e rode o build incremental (leva poucos segundos!):
    ```powershell
    .\local-build\build-local.ps1 -Target sofle_receptor_ABNT2_displayV2
    ```
    *(Se alterou algo nas metades, compile também `-Target sofle_esquerdo,sofle_direito`.)*
 3. Coloque o `nice_nano_v2` em modo bootloader (no dongle, o combo das 2 primeiras + 2 últimas teclas da linha inferior, ou duplo clique no botão reset) e copie o `.uf2` de `build-artifacts\` para o drive removível.
-4. Quando gostar do resultado, faça commit normalmente dentro de `zmk-workspace\zmk`:
+4. Quando o resultado estiver pronto, faça commit e push em `C:\Users\victor\Documents\GitHub\zmk`:
    ```powershell
-   cd C:\Users\victor\Documents\GitHub\zmk-workspace\zmk
+   cd C:\Users\victor\Documents\GitHub\zmk
    git status
    git diff
    git add -p
    git commit -m "Descreva sua alteracao no ZMK"
+   git push origin tergo-v0.3
    ```
 
 > **Atenção:** `west update` reseta projetos gerenciados pelo manifesto, mas **não** sobrescreve a pasta raiz `zmk/` quando `zmk/app` é o repositório de manifesto (`west init -l app`). Ainda assim, mantenha suas alterações em uma branch com commits!
@@ -107,31 +110,27 @@ Quando você altera código C no ZMK, `LOG_INF(...)`, `LOG_WRN(...)` e `LOG_DBG(
 
 ---
 
-## 5. Como Usar Seu ZMK Modificado na Pipeline da Nuvem (GitHub Actions)
+## 5. Como Funciona a Pipeline na Nuvem com `TergoTeclados/zmk`
 
-Quando suas mudanças no ZMK estiverem prontas e você quiser que o GitHub Actions do `zmk-config-tergo-sofle` volte a gerar todos os 7 artefatos automaticamente na nuvem:
+O [`config/west.yml`](../config/west.yml) já está configurado assim:
 
-1. Faça um **Fork** de `https://github.com/zmkfirmware/zmk` na sua conta ou organização do GitHub (ex.: `TergoTeclados/zmk`).
-2. Adicione o fork como remote no seu clone local e envie sua branch:
-   ```powershell
-   cd C:\Users\victor\Documents\GitHub\zmk-workspace\zmk
-   git remote add meu-fork https://github.com/SEU-USUARIO/zmk.git
-   git push -u meu-fork tergo-custom
-   ```
-3. Atualize o arquivo [`config/west.yml`](../config/west.yml) no `zmk-config-tergo-sofle` para apontar para o seu fork e branch:
-   ```yaml
-   manifest:
-     remotes:
-       - name: zmkfirmware
-         url-base: https://github.com/zmkfirmware
-       - name: meu-fork
-         url-base: https://github.com/SEU-USUARIO
-     projects:
-       - name: zmk
-         remote: meu-fork
-         revision: tergo-custom
-         import: app/west.yml
-     self:
-       path: config
-   ```
-4. Faça push no `zmk-config-tergo-sofle`: o GitHub Actions (`.github/workflows/build.yml`) lerá o novo `config/west.yml`, baixará o seu fork do ZMK na branch `tergo-custom` e compilará todos os `.uf2` na nuvem!
+```yaml
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+    - name: tergoteclados
+      url-base: https://github.com/TergoTeclados
+  projects:
+    - name: zmk
+      remote: tergoteclados
+      revision: tergo-v0.3
+      import: app/west.yml
+  self:
+    path: config
+```
+
+Com isso:
+- Sempre que você fizer push na branch `tergo-v0.3` do `TergoTeclados/zmk` e disparar o workflow no `zmk-config-tergo-sofle` (por `git push` ou clicando em **Run workflow** na aba Actions do GitHub), a pipeline compila todos os 7 `.uf2` na nuvem usando o seu fork automaticamente!
+- O `.github/workflows/build.yml` continua chamando `zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3`, o que funciona normalmente porque o workflow apenas lê o seu `config/west.yml` para baixar o código do `TergoTeclados/zmk`.
+- **Dica para releases estáveis:** quando fechar uma versão importante no `TergoTeclados/zmk`, você pode criar uma tag (ex.: `git tag tergo-v0.3.1 && git push origin tergo-v0.3.1`) e apontar `revision: tergo-v0.3.1` no `config/west.yml` para garantir builds 100% reprodutíveis e evitar cache antigo no GitHub Actions.

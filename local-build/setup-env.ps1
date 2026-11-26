@@ -3,43 +3,50 @@
     Prepara o ambiente local nativo no Windows para compilar o firmware ZMK (v0.3 / Zephyr 3.5).
 
 .DESCRIPTION
-    Cria um workspace portatil (por padrao em ..\zmk-workspace) sem necessidade de Docker, WSL
-    ou privilegios de administrador:
-      - Ambiente virtual Python 3.12 via uv (west, cmake<4, ninja, deps do Zephyr e nanopb)
-      - Zephyr SDK 0.16.8 minimal + toolchain arm-zephyr-eabi
-      - protoc 28.3 (para ZMK Studio / nanopb)
-      - Clone do repositorio zmkfirmware/zmk (v0.3) + west init/update (--filter=tree:0)
+    Prepara o ambiente portatil sem necessidade de Docker, WSL ou privilegios de administrador:
+      - Toolchain em ..\zmk-workspace (.venv Python 3.12, Zephyr SDK 0.16.8 ARM, protoc 28.3)
+      - Repositorio do firmware ZMK (fork TergoTeclados/zmk @ tergo-v0.3) em ..\zmk
+      - Workspace West (west init -l app + west update --filter=tree:0) dentro de ..\zmk
 
 .PARAMETER WorkspacePath
-    Caminho da pasta onde o workspace e as ferramentas serao instalados.
+    Caminho da pasta onde a toolchain (.venv e tools) sera instalada.
     Padrao: ..\zmk-workspace (ao lado de zmk-config-tergo-sofle).
 
+.PARAMETER ZmkPath
+    Caminho da pasta do repositorio Git do ZMK (que tambem atua como workspace West).
+    Padrao: ..\zmk (ao lado de zmk-config-tergo-sofle).
+
 .PARAMETER ZmkRepoUrl
-    URL do repositorio Git do ZMK a ser clonado. Padrao: https://github.com/zmkfirmware/zmk.git
+    URL do repositorio Git do ZMK a ser clonado. Padrao: https://github.com/TergoTeclados/zmk.git
 
 .PARAMETER ZmkRevision
-    Branch ou tag inicial do ZMK. Padrao: v0.3
+    Branch ou tag inicial do ZMK. Padrao: tergo-v0.3
 #>
 [CmdletBinding()]
 param(
     [string]$WorkspacePath = "",
-    [string]$ZmkRepoUrl = "https://github.com/zmkfirmware/zmk.git",
-    [string]$ZmkRevision = "v0.3"
+    [string]$ZmkPath = "",
+    [string]$ZmkRepoUrl = "https://github.com/TergoTeclados/zmk.git",
+    [string]$ZmkRevision = "tergo-v0.3"
 )
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$parentDir = Split-Path $repoRoot -Parent
 if ([string]::IsNullOrWhiteSpace($WorkspacePath)) {
-    $WorkspacePath = Join-Path (Split-Path $repoRoot -Parent) "zmk-workspace"
+    $WorkspacePath = Join-Path $parentDir "zmk-workspace"
+}
+if ([string]::IsNullOrWhiteSpace($ZmkPath)) {
+    $ZmkPath = Join-Path $parentDir "zmk"
 }
 
-$toolsDir = Join-Path $WorkspacePath "tools"
-$venvDir  = Join-Path $WorkspacePath ".venv"
-$sdkDir   = Join-Path $toolsDir "zephyr-sdk-0.16.8"
+$toolsDir  = Join-Path $WorkspacePath "tools"
+$venvDir   = Join-Path $WorkspacePath ".venv"
+$sdkDir    = Join-Path $toolsDir "zephyr-sdk-0.16.8"
 $protocDir = Join-Path $toolsDir "protoc"
-$zmkDir   = Join-Path $WorkspacePath "zmk"
+$zmkDir    = $ZmkPath
 
 # Verificacao de pre-requisitos
 foreach ($cmd in @("git", "uv", "tar")) {
