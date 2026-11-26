@@ -1,0 +1,26 @@
+# Copyright (c) 2026 Tergo Teclados
+# SPDX-License-Identifier: MIT
+
+description: Sensor rotate behavior that invokes keymap bindings at given key positions
+
+compatible: "zmk,behavior-sensor-rotate-key-pos"
+
+properties:
+  label:
+    type: string
+    required: false
+    deprecated: true
+  display-name:
+    type: string
+    required: false
+  "#sensor-binding-cells":
+    type: int
+    required: true
+    const: 2
+  tap-ms:
+    type: int
+    default: 5
+
+sensor-binding-cells:
+  - param1
+  - param2

@@ -22,6 +22,12 @@
 #define NUMPAD 6
 #define MOUSE 7
 
+// Posicoes virtuais para rotacao dos knobs no ZMK Studio (indices 60..63)
+#define KNOB_L_CW  60
+#define KNOB_L_CCW 61
+#define KNOB_R_CW  62
+#define KNOB_R_CCW 63
+
 // ABNT2 keycodes
 // Mapeamento de teclas ABNT2 que são usados para o layout brasileiro
 // Inspired by https://github.com/qmk/qmk_firmware/blob/master/quantum/keymap_extras/keymap_brazilian_abnt2.h
@@ -51,6 +57,18 @@
     flavor = "balanced"; // Pode ser "balanced", "hold-preferred" ou "tap-preferred"
 };
 
+
+// Behavior customizado que redireciona o giro dos knobs para posicoes virtuais do keymap
+/ {
+    behaviors {
+        enc_key_pos: behavior_sensor_rotate_key_pos {
+            compatible = "zmk,behavior-sensor-rotate-key-pos";
+            #sensor-binding-cells = <2>;
+            display-name = "Encoder Key Pos";
+            tap-ms = <5>;
+        };
+    };
+};
 
 // Combos do teclado
 / {
@@ -86,9 +104,10 @@
 //&trans    &none     &none     &none       &none     &none                         &none     &none    &none     &none     &none    &trans
 //&trans    &none     &none     &none       &none     &none      &trans    &trans   &none     &none    &none     &none     &none    &trans
 //                    &trans    &trans      &trans    &trans     &trans    &trans   &trans    &trans   &trans    &trans
+//                    &trans    &trans      &trans    &trans
 //            >;
 //
-//            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>; // Para o knob (encoder)
+//            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>; // Para o knob (encoder)
 //        };
 
         base_layer {
@@ -107,8 +126,10 @@
 &kp LCTRL &kp Z  &kp X      &kp C    &kp V     &kp B     &mo MEDIA       &mo ADJUST &kp N  &kp M      &kp COMMA &kp DOT  &kp FSLH  &kp BR_SLSH
                  &mo NUMPAD &kp LGUI &kp LALT &kp SPACE  &mo SYMB_NAV    &kp ENTER  &kp BSPC  &kp DEL &kp RGUI  &kp RCTRL
 #endif
+                 // Rotacao dos knobs: Esq Horario (60), Esq Anti-horario (61), Dir Horario (62), Dir Anti-horario (63)
+                 &kp C_VOL_UP &kp C_VOL_DN &kp PG_UP &kp PG_DN
             >;
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         adept_layer {
@@ -119,9 +140,10 @@
 &trans    &mt LGUI A &mt LALT S &mt LCTRL D &mt LSHFT F &trans                                      &trans    &mt LSHFT J &mt LCTRL K &mt LALT L &mt LGUI SEMI &trans
 &trans    &trans     &trans     &trans      &trans      &trans           &trans             &trans  &trans    &trans      &trans      &trans     &trans        &trans
                      &trans     &trans      &trans      &lt MOUSE SPACE  &lt SYMB_NAV TAB   &trans  &trans    &trans      &trans      &trans
+                     &trans     &trans      &trans      &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         // By defaults its equal to base_layer. To be customized by user.
@@ -141,9 +163,10 @@
 &kp LCTRL &kp Z  &kp X      &kp C    &kp V     &kp B     &mo MEDIA       &mo ADJUST &kp N  &kp M      &kp COMMA &kp DOT  &kp FSLH  &kp BR_SLSH
                  &mo NUMPAD &kp LGUI &kp LALT &kp SPACE  &mo SYMB_NAV    &kp ENTER  &kp BSPC  &kp DEL &kp RGUI  &kp RCTRL
 #endif
+                 &kp C_VOL_UP &kp C_VOL_DN &kp PG_UP &kp PG_DN
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         symb_nav_layer {
@@ -162,9 +185,10 @@
 &trans    &kp NUBS      &kp LS(NUBS) &kp LS(MINUS) &kp BR_LBCT  &kp BR_RBCT  &trans   &trans  &kp CAPS  &kp LC(LEFT) &kp ESC   &kp LC(RIGHT) &kp PAUSE_BREAK   &none
                         &trans       &trans        &trans       &trans       &trans   &trans  &trans    &trans       &trans    &trans
 #endif
+                        &trans       &trans        &trans       &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         adjust_layer {
@@ -175,9 +199,10 @@
 &none          &none        &none        &out OUT_TOG &none        &none                        &none    &none   &bt BT_CLR     &none   &none   &none
 &bootloader    &none        &to BASE     &to ADEPT    &to OTHER    &none     &trans    &trans   &none    &none   &none          &none   &none   &bootloader
                &trans       &trans       &trans       &trans       &trans    &trans    &trans   &trans   &trans  &trans
+               &trans       &trans       &trans       &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         media_layer {
@@ -188,9 +213,10 @@
 &trans    &none     &none     &none       &none     &none                         &none     &kp C_VOL_DN &kp C_MUTE &kp C_VOL_UP &none   &trans
 &trans    &none     &none     &none       &none     &none      &trans    &trans   &none     &kp C_PREV   &kp C_PP   &kp C_NEXT   &none   &trans
                     &trans    &trans      &trans    &trans     &trans    &trans   &trans    &trans       &trans     &trans
+                    &trans    &trans      &trans    &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         numpad_layer {
@@ -201,9 +227,10 @@
 &trans    &none     &none     &none       &none     &none                         &none     &kp KP_N4   &kp KP_N5     &kp KP_N6        &kp KP_PLUS    &trans
 &trans    &none     &none     &none       &none     &none      &trans    &trans   &none     &kp KP_N1   &kp KP_N2     &kp KP_N3        &kp KP_ENTER   &trans
                     &trans    &trans      &trans    &trans     &trans    &trans   &trans    &kp KP_N0   &kp KP_N0     &kp KP_DOT
+                    &trans    &trans      &trans    &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         mouse_layer {
@@ -214,9 +241,10 @@
 &trans    &kp LGUI  &kp LALT  &kp LCTRL   &kp LSHFT  &none                           &msc SCRL_DOWN &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_RIGHT &none     &trans
 &trans    &none     &none     &none       &none      &none     &trans    &trans      &none          &none          &none          &none           &none     &trans
                     &trans    &trans      &trans     &trans    &trans    &mkp RCLK   &mkp LCLK      &mkp MCLK      &trans         &trans
+                    &trans    &trans      &trans     &trans
             >;
 
-            sensor-bindings = <&inc_dec_kp C_VOL_UP C_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+            sensor-bindings = <&enc_key_pos KNOB_L_CW KNOB_L_CCW &enc_key_pos KNOB_R_CW KNOB_R_CCW>;
         };
 
         // Extra layers, so it can be added and customized in ZMK Studio
